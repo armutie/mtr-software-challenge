@@ -12,8 +12,14 @@ Visualization Manager:
     - Class: rviz_default_plugins/MarkerArray
       Name: Challenge
       Enabled: true
-      Marker Topic:
+      Namespaces: {}
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
         Value: /challenge/markers
+      Value: true
   Global Options:
     Background Color: 32; 35; 42
     Fixed Frame: map
