@@ -17,6 +17,8 @@ Install ROS 2 Jazzy Desktop using the official ROS documentation. Then install t
 ```bash
 cd ~/mtr-software-challenge
 source /opt/ros/jazzy/setup.bash
+sudo apt update
+sudo apt install -y python3-rosdep
 sudo rosdep init  # skip this if rosdep is already initialized
 rosdep update
 rosdep install --from-paths src --ignore-src -r -y
