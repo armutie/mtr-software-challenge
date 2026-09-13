@@ -8,26 +8,20 @@ Visualization Manager:
       Name: Grid
       Enabled: true
       Cell Size: 1
-      Plane: XY
     - Class: rviz_default_plugins/MarkerArray
       Name: Challenge
       Enabled: true
       Marker Topic:
         Value: /challenge/markers
-  Enabled: true
   Global Options:
     Background Color: 32; 35; 42
     Fixed Frame: map
-    Frame Rate: 30
-  Name: root
   Tools:
     - Class: rviz_default_plugins/Interact
     - Class: rviz_default_plugins/MoveCamera
-    - Class: rviz_default_plugins/Select
   Views:
     Current:
       Class: rviz_default_plugins/TopDownOrtho
-      Angle: 0
       Scale: 60
       X: -2
       Y: -0.5

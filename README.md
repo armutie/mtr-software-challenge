@@ -39,16 +39,13 @@ This is an onboarding exercise, not a speed competition. Optimize for clear, rel
 
 ```text
 src/
-  mtr_challenge_simulator/   # Small 2D robot world
-  mtr_challenge_controller/  # Starter controller you will repair
-  mtr_challenge_bringup/     # Launch and RViz configuration
+  mtr_software_challenge/    # Simulator, controller, launch, and tests
 docs/                        # Setup, challenge, and help
 scripts/                     # Local verification
 ```
 
-The simulator is infrastructure. You should not need to modify it to complete the challenge.
+Almost all participant work happens in `controller.cpp` and `controller_math.hpp`. The simulator is infrastructure and should not need modification.
 
 ## Expected time
 
 Plan for one focused session of roughly 3–5 hours. Ask for help if setup alone takes more than 30 minutes.
-

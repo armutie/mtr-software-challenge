@@ -4,12 +4,12 @@
 
 The simulator publishes the robot's motion and the waypoint. The controller should observe both, compute a command, and drive the robot to the target.
 
-The starter code compiles, but the running system is not trustworthy. There are two intentional problems in the controller package. Both represent mistakes that occur in real robotic systems.
+The starter code compiles, but the running system is not trustworthy. There are two intentional problems in the controller code. Both represent mistakes that occur in real robotic systems.
 
 ## Rules
 
-- Treat `mtr_challenge_simulator` as working infrastructure.
-- Make your functional changes in `mtr_challenge_controller`.
+- Treat `simulator.cpp` as working infrastructure.
+- Make your functional changes in `controller.cpp` and `controller_math.hpp`.
 - Do not change the waypoint or initial pose to avoid a problem.
 - Do not weaken or remove tests.
 - Use ROS 2 inspection tools before editing code.
@@ -57,4 +57,3 @@ Useful questions:
 - [ ] No simulator or test files were changed.
 - [ ] Commits explain meaningful units of work.
 - [ ] The pull request explains the faults, fixes, and verification.
-

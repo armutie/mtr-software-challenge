@@ -34,7 +34,7 @@ source install/setup.bash
 ## Launch
 
 ```bash
-ros2 launch mtr_challenge_bringup challenge.launch.py
+ros2 launch mtr_software_challenge challenge.launch.py
 ```
 
 RViz should open with a blue robot, a green waypoint, and the robot's travelled path. The starter system is intentionally not fully correct.
@@ -57,4 +57,3 @@ At least one controller test is expected to fail before you fix the challenge.
 - **Build folder contains old results:** remove `build`, `install`, and `log`, then rebuild.
 
 If setup takes longer than 30 minutes, ask a mentor. Environment problems are not the challenge.
-
