@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>mtr_challenge_bringup</name>
+  <version>0.1.0</version>
+  <description>Launch and visualization configuration for the MTR software challenge.</description>
+  <maintainer email="software@mtr.invalid">MTR Software Team</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>mtr_challenge_controller</exec_depend>
+  <exec_depend>mtr_challenge_simulator</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
