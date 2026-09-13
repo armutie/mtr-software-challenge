@@ -18,7 +18,7 @@ Use only as many hints as you need.
 
 ### Hint 1 — The robot never moves
 
-Check whether every publisher has a matching subscriber. ROS 2 topic names must match exactly.
+Run `rqt_graph` and select **Nodes/Topics (all)**. Look for a topic from the simulator that does not connect to the controller. Then use `ros2 node info /controller` to compare the exact subscription name.
 
 ### Hint 2 — The robot turns strangely
 
@@ -35,4 +35,3 @@ A useful help request looks like:
 > I expected the controller to receive odometry, but its callback never runs. `/robot/odom` is publishing at 20 Hz, and `ros2 node info /waypoint_controller` shows a different subscription. I think the node is wired to the wrong topic, but I am unsure where that is configured.
 
 Mentors should help with the next debugging step rather than provide the full solution.
-

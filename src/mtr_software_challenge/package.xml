@@ -13,6 +13,7 @@
   <depend>launch_ros</depend>
   <depend>nav_msgs</depend>
   <depend>rclcpp</depend>
+  <exec_depend>rqt_graph</exec_depend>
   <depend>rviz2</depend>
   <depend>tf2_ros</depend>
   <depend>visualization_msgs</depend>
