@@ -1,6 +1,8 @@
+#include <array>
 #include <chrono>
 #include <cmath>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "geometry_msgs/msg/point_stamped.hpp"
@@ -15,7 +17,7 @@ using namespace std::chrono_literals;
 class Simulator : public rclcpp::Node
 {
 public:
-  Simulator() : Node("simulator"), last_update_(now())
+  Simulator() : Node("simulator"), last_update_(now()), waypoint_started_at_(last_update_)
   {
     odometry_ = create_publisher<nav_msgs::msg::Odometry>("/robot/odom", 10);
     waypoint_ = create_publisher<geometry_msgs::msg::PointStamped>("/challenge/waypoint", 10);
@@ -69,6 +71,40 @@ private:
     y_ += command_.linear.x * std::sin(yaw_) * dt;
     path_.push_back(point(x_, y_));
 
+    const auto [goal_x, goal_y] = waypoints_[waypoint_index_];
+
+    if (!finished_) {
+      if (waiting_for_next_waypoint_) {
+        command_ = geometry_msgs::msg::Twist{};
+        if ((time - waypoint_reached_at_).seconds() >= 1.0) {
+          ++waypoint_index_;
+          waiting_for_next_waypoint_ = false;
+          waypoint_started_at_ = time;
+          RCLCPP_INFO(
+            get_logger(), "NEW WAYPOINT %zu/%zu", waypoint_index_ + 1, waypoints_.size());
+        }
+      } else if (std::hypot(goal_x - x_, goal_y - y_) <= 0.20) {
+        const double travel_time = (time - waypoint_started_at_).seconds();
+        total_travel_time_ += travel_time;
+        command_ = geometry_msgs::msg::Twist{};
+        RCLCPP_INFO(
+          get_logger(), "WAYPOINT %zu/%zu REACHED IN %.2f s",
+          waypoint_index_ + 1, waypoints_.size(), travel_time);
+
+        if (waypoint_index_ + 1 == waypoints_.size()) {
+          finished_ = true;
+          RCLCPP_INFO(
+            get_logger(), "CHALLENGE COMPLETE: %zu/%zu waypoints reached; average time %.2f s",
+            waypoints_.size(), waypoints_.size(), total_travel_time_ / waypoints_.size());
+        } else {
+          waiting_for_next_waypoint_ = true;
+          waypoint_reached_at_ = time;
+        }
+      }
+    }
+
+    const auto [published_goal_x, published_goal_y] = waypoints_[waypoint_index_];
+
     nav_msgs::msg::Odometry odometry;
     odometry.header.frame_id = "map";
     odometry.header.stamp = time;
@@ -79,15 +115,10 @@ private:
     geometry_msgs::msg::PointStamped waypoint;
     waypoint.header.frame_id = "map";
     waypoint.header.stamp = time;
-    waypoint.point = point(goal_x_, goal_y_);
+    waypoint.point = point(published_goal_x, published_goal_y);
     waypoint_->publish(waypoint);
 
     publish_markers();
-
-    if (!reached_ && std::hypot(goal_x_ - x_, goal_y_ - y_) <= 0.20) {
-      reached_ = true;
-      RCLCPP_INFO(get_logger(), "GOAL REACHED");
-    }
   }
 
   void publish_markers()
@@ -105,7 +136,8 @@ private:
     all.markers.push_back(robot);
 
     auto goal = marker(1, visualization_msgs::msg::Marker::SPHERE);
-    goal.pose.position = point(goal_x_, goal_y_);
+    const auto [goal_x, goal_y] = waypoints_[waypoint_index_];
+    goal.pose.position = point(goal_x, goal_y);
     goal.scale.x = 0.4;
     goal.scale.y = 0.4;
     goal.scale.z = 0.25;
@@ -130,14 +162,23 @@ private:
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr commands_;
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Time last_update_;
+  rclcpp::Time waypoint_started_at_;
+  rclcpp::Time waypoint_reached_at_{0, 0, RCL_ROS_TIME};
   geometry_msgs::msg::Twist command_;
   std::vector<geometry_msgs::msg::Point> path_;
+  const std::array<std::pair<double, double>, 5> waypoints_{
+    std::pair{-4.0, -1.0},
+    std::pair{-1.0, 4.0},
+    std::pair{4.0, 2.0},
+    std::pair{2.0, -4.0},
+    std::pair{-3.0, -3.0}};
+  std::size_t waypoint_index_{0};
   double x_{0.0};
   double y_{0.0};
   double yaw_{2.96705972839};  // 170 degrees
-  const double goal_x_{-4.0};
-  const double goal_y_{-1.0};
-  bool reached_{false};
+  double total_travel_time_{0.0};
+  bool waiting_for_next_waypoint_{false};
+  bool finished_{false};
 };
 
 int main(int argc, char ** argv)
@@ -146,4 +187,3 @@ int main(int argc, char ** argv)
   rclcpp::spin(std::make_shared<Simulator>());
   rclcpp::shutdown();
 }
-
