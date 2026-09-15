@@ -1,51 +1,136 @@
 # MTR Software Challenge
 
-A small, visual ROS 2 onboarding project for the MTR software team.
+Welcome to the MTR Software Challenge. This project is a simplified simulation of a real autonomous-boat control loop. The blue arrow in RViz represents the boat, and the green marker represents a person in distress. Your task is to find and fix two controller bugs so the boat reaches the waypoint reliably.
 
-## Mission
+Work on your own branch and push that branch when you are finished.
 
-A simulated robot has one job: reach the displayed waypoint. The starter system builds, but it does not behave correctly. Your task is to understand the ROS 2 system, diagnose the problems, repair the controller, and submit your work as a pull request.
+## Repository access
 
-You are finished when the robot:
+Every participant must be added as a collaborator before pushing to this repository. If you have not already been added, send us your GitHub username and email address when you are ready to submit. This is especially important if your GitHub account is not associated with a University of Waterloo (`@uwaterloo.ca`) address.
 
-- reaches the waypoint reliably;
-- chooses a sensible direction of travel;
-- stops within `0.20 m` of the waypoint;
-- passes the supplied automated tests; and
-- does not publish commands after reaching the goal.
+If you cannot push your branch, send us the files containing your code changes instead.
 
-This is an onboarding exercise, not a speed competition. Optimize for clear, reliable engineering.
+## Requirements
 
-## What you will practise
+- Ubuntu 24.04, either installed directly or through [WSL 2](https://learn.microsoft.com/windows/wsl/install)
+- [ROS 2 Jazzy Desktop](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html)
+- A desktop session capable of running RViz 2
 
-- building and running a ROS 2 workspace;
-- reading an unfamiliar C++ codebase;
-- inspecting nodes and topics;
-- debugging integration and control problems;
-- writing and testing a small ROS 2 change; and
-- using a branch, meaningful commits, and a pull request.
+Unless a step specifically says Windows PowerShell, run each command in an Ubuntu terminal.
 
-## Start here
+## Download the project
 
-1. Read [Setup](docs/SETUP.md).
-2. Read [Challenge](docs/CHALLENGE.md).
-3. Create a branch named `onboarding/<your-name>`.
-4. Build and launch the system.
-5. Investigate before changing code.
-6. Use [Getting Help](docs/GETTING_HELP.md) if you get stuck.
-7. Open a pull request using the included template.
+Install Git and the required ROS tools:
 
-## Repository map
-
-```text
-src/
-  mtr_software_challenge/    # Simulator, controller, launch, and tests
-docs/                        # Setup, challenge, and help
-scripts/                     # Local verification
+```bash
+sudo apt update
+sudo apt install -y git python3-rosdep python3-colcon-common-extensions
 ```
 
-Almost all participant work happens in `controller.cpp` and `controller_math.hpp`. The simulator is infrastructure and should not need modification.
+Clone the repository and enter the project directory:
 
-## Expected time
+```bash
+cd ~
+git clone https://github.com/armutie/mtr-software-challenge.git
+cd mtr-software-challenge
+```
 
-Plan for one focused session of roughly 3–5 hours. Ask for help if setup alone takes more than 30 minutes.
+Create a branch for your work. Replace `firstname` with your own first name:
+
+```bash
+git switch -c onboarding-firstname
+```
+
+## Install the dependencies
+
+```bash
+source /opt/ros/jazzy/setup.bash
+sudo rosdep init
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
+```
+
+If `sudo rosdep init` reports that rosdep has already been initialized, continue to the next command.
+
+## Build and launch
+
+```bash
+source /opt/ros/jazzy/setup.bash
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch mtr_software_challenge challenge.launch.py
+```
+
+RViz should open with a blue boat, a green waypoint, and a grid. The boat will not initially move; this is the starting point of the challenge. Press `Ctrl+C` in the terminal to stop the simulation.
+
+After changing C++ code, stop the simulation, rebuild, source the workspace, and launch it again:
+
+```bash
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch mtr_software_challenge challenge.launch.py
+```
+
+## The challenge
+
+The simulator publishes the boat's current position and the waypoint. The controller should read that information, decide how quickly the boat should move and turn, and publish a velocity command back to the simulator.
+
+There are two intentional problems:
+
+1. The boat does not move when the starter project is launched.
+2. After the first problem is repaired, the boat may turn the long way around.
+
+Make functional changes only in:
+
+```text
+src/mtr_software_challenge/src/controller.cpp
+src/mtr_software_challenge/include/mtr_software_challenge/controller_math.hpp
+```
+
+Treat `simulator.cpp` as working infrastructure. Do not change the waypoint, initial pose, simulator, or supplied tests.
+
+### General hints
+
+- Compare the running system with the intended publisher and subscriber flow.
+- `rqt_graph` and the ROS 2 command-line tools can help you inspect connections between nodes.
+- Topic names and message types must match exactly.
+- Angles are measured in radians and wrap around at `-pi` and `+pi`.
+- The boat should choose the shortest direction of rotation.
+
+## Run the tests
+
+From the repository root, run:
+
+```bash
+./scripts/check.sh
+```
+
+In the untouched starter code, one heading test passes and two heading-wrapping tests fail. After completing the challenge, all three tests should pass.
+
+## Completion and submission
+
+You are finished when:
+
+- the boat reaches the waypoint;
+- it chooses the shortest reasonable direction when turning;
+- it stops within `0.20 m` of the waypoint;
+- all supplied tests pass; and
+- your functional changes are limited to the two controller files listed above.
+
+Review and commit your work:
+
+```bash
+git status
+git diff
+git add src/mtr_software_challenge/src/controller.cpp
+git add src/mtr_software_challenge/include/mtr_software_challenge/controller_math.hpp
+git commit -m "Fix boat controller"
+```
+
+Push your branch, replacing the example name with your actual branch name:
+
+```bash
+git push -u origin onboarding-firstname
+```
+
+Once it has been pushed, send us the name of your branch.
