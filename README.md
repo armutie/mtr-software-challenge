@@ -97,14 +97,6 @@ Treat `simulator.cpp` as working infrastructure. Do not change the waypoint, ini
 - Angles are measured in radians and wrap around at `-pi` and `+pi`.
 - The boat should choose the shortest direction of rotation.
 
-## Optional challenge: improve efficiency
-
-Once the two required problems are fixed, watch the complete route in RViz. The boat may move forward while it is still facing away from a waypoint, producing a wide and inefficient path.
-
-If you finish early, improve the controller so the boat completes all five waypoints more efficiently. Consider how the heading error should affect forward speed. There is no required formula, but the boat must remain reliable, choose the shortest direction of rotation, and stop at every waypoint. Do not change the simulator or waypoint locations.
-
-The simulator prints the travel time for each waypoint and the average after all five are reached. This extension is optional and is not required to complete the challenge.
-
 ## Run the tests
 
 From the repository root, run:
