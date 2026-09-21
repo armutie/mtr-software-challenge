@@ -16,8 +16,7 @@ public:
     commands_ = create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
 
     odometry_ = create_subscription<nav_msgs::msg::Odometry>(
-      "/robot/odom", 10, //Changed odometry to odom --> Due to mismatched name, /robot/odometry had 0 publishers and 1 subscriber meaning no node was sending data to the controller
-                         //the simulator is supposed to publish to /robot/odom for the controller to receive the data
+      "/robot/odometry", 10,
       [this](nav_msgs::msg::Odometry::SharedPtr message) { drive(*message); });
 
     waypoint_ = create_subscription<geometry_msgs::msg::PointStamped>(
