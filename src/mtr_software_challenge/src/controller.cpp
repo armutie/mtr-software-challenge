@@ -15,8 +15,9 @@ public:
   {
     commands_ = create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
 
+    //updated naming so the code here can recieve messages from the simulator
     odometry_ = create_subscription<nav_msgs::msg::Odometry>(
-      "/robot/odometry", 10,
+      "/odometry", 10,
       [this](nav_msgs::msg::Odometry::SharedPtr message) { drive(*message); });
 
     waypoint_ = create_subscription<geometry_msgs::msg::PointStamped>(
